@@ -1,0 +1,33 @@
+{
+  "actionTitle": "Build project SampleProject with scheme SampleProject",
+  "analyzerWarningCount": 0,
+  "analyzerWarnings": [],
+  "endTime": 1763935357.829,
+  "errorCount": 2,
+  "errors": [
+    {
+      "issueType": "Error",
+      "message": "Cannot find 'undefinedVariable' in scope",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#25",
+      "className": "BrokenFile"
+    },
+    {
+      "issueType": "Error",
+      "message": "Type 'String' has no member 'nonExistent'",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#30"
+    }
+  ],
+  "startTime": 1763935325.829,
+  "status": "failed",
+  "warningCount": 1,
+  "warnings": [
+    {
+      "issueType": "Warning",
+      "message": "Initialization of variable was never used",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/Other.swift#10"
+    }
+  ]
+}

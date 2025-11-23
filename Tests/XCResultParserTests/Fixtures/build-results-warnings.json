@@ -1,0 +1,34 @@
+{
+  "actionTitle": "Build project SampleProject with scheme SampleProject",
+  "analyzerWarningCount": 1,
+  "analyzerWarnings": [
+    {
+      "issueType": "Analyzer Warning",
+      "message": "Potential memory leak",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/Memory.swift#42",
+      "className": "Memory"
+    }
+  ],
+  "endTime": 1763935357.829,
+  "errorCount": 0,
+  "errors": [],
+  "startTime": 1763935325.829,
+  "status": "succeeded",
+  "warningCount": 2,
+  "warnings": [
+    {
+      "issueType": "Warning",
+      "message": "Variable 'unused' was never used",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/ContentView.swift#15",
+      "className": "ContentView"
+    },
+    {
+      "issueType": "Warning",
+      "message": "Deprecated API usage",
+      "targetName": "SampleProject",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/LegacyCode.swift#100"
+    }
+  ]
+}

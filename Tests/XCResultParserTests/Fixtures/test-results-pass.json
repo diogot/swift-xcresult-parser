@@ -1,0 +1,52 @@
+{
+  "devices": [
+    {
+      "architecture": "arm64",
+      "deviceId": "C9052A05-F7A1-4E33-880E-3FB3485C3F49",
+      "deviceName": "iPhone 16 Pro",
+      "modelName": "iPhone 16 Pro",
+      "osBuildNumber": "23B86",
+      "osVersion": "26.1",
+      "platform": "iOS Simulator"
+    }
+  ],
+  "testNodes": [
+    {
+      "name": "SampleProject",
+      "nodeType": "Test Plan",
+      "result": "Passed",
+      "children": [
+        {
+          "name": "SampleProjectTests",
+          "nodeType": "Unit test bundle",
+          "result": "Passed",
+          "children": [
+            {
+              "name": "SampleProjectTests",
+              "nodeType": "Test Suite",
+              "result": "Passed",
+              "children": [
+                {
+                  "name": "testExample()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testExample()",
+                  "result": "Passed",
+                  "duration": "0.001s",
+                  "durationInSeconds": 0.001
+                },
+                {
+                  "name": "testAnotherExample()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testAnotherExample()",
+                  "result": "Passed",
+                  "duration": "0.002s",
+                  "durationInSeconds": 0.002
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
