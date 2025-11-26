@@ -28,11 +28,13 @@ public struct BuildIssue: Sendable, Codable, Equatable {
 
     /// Severity level for annotations based on issue type
     public var severity: Severity {
-        switch issueType.lowercased() {
-        case "error": .failure
-        case "warning": .warning
-        case "analyzer warning": .warning
-        default: .notice
+        let lowercased = issueType.lowercased()
+        if lowercased.contains("error") {
+            return .failure
+        } else if lowercased.contains("warning") {
+            return .warning
+        } else {
+            return .notice
         }
     }
 }
