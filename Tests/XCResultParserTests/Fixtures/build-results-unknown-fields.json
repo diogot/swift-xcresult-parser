@@ -1,0 +1,12 @@
+{
+  "actionTitle": "Build project SampleProject with scheme SampleProject",
+  "analyzerWarningCount": 0,
+  "analyzerWarnings": [],
+  "errorCount": 0,
+  "errors": [],
+  "status": "succeeded",
+  "warningCount": 0,
+  "warnings": [],
+  "futureField": "some new field from future Xcode",
+  "anotherUnknownField": 12345
+}

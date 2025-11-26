@@ -1,0 +1,95 @@
+{
+  "devices": [
+    {
+      "architecture": "arm64",
+      "deviceId": "C9052A05-F7A1-4E33-880E-3FB3485C3F49",
+      "deviceName": "iPhone 16 Pro",
+      "modelName": "iPhone 16 Pro",
+      "osBuildNumber": "23B86",
+      "osVersion": "26.1",
+      "platform": "iOS Simulator"
+    }
+  ],
+  "testNodes": [
+    {
+      "name": "SampleProject",
+      "nodeType": "Test Plan",
+      "result": "Failed",
+      "children": [
+        {
+          "name": "SampleProjectTests",
+          "nodeType": "Unit test bundle",
+          "result": "Failed",
+          "children": [
+            {
+              "name": "SampleProjectTests",
+              "nodeType": "Test Suite",
+              "result": "Failed",
+              "children": [
+                {
+                  "name": "testAlwaysFails()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testAlwaysFails()",
+                  "result": "Failed",
+                  "duration": "0.005s",
+                  "durationInSeconds": 0.005,
+                  "children": [
+                    {
+                      "name": "SampleProjectTests.swift:14: Issue recorded: This test will always fail",
+                      "nodeType": "Failure Message"
+                    }
+                  ]
+                },
+                {
+                  "name": "testExpectedFailure()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testExpectedFailure()",
+                  "result": "Expected Failure",
+                  "duration": "0.001s",
+                  "durationInSeconds": 0.001
+                },
+                {
+                  "name": "testSkipped()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testSkipped()",
+                  "result": "Skipped",
+                  "duration": "0.000s",
+                  "durationInSeconds": 0.0
+                },
+                {
+                  "name": "testPassing()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "SampleProjectTests/testPassing()",
+                  "result": "Passed",
+                  "duration": "0.001s",
+                  "durationInSeconds": 0.001
+                }
+              ]
+            },
+            {
+              "name": "AnotherTestSuite",
+              "nodeType": "Test Suite",
+              "result": "Failed",
+              "children": [
+                {
+                  "name": "testAnotherFailure()",
+                  "nodeType": "Test Case",
+                  "nodeIdentifier": "AnotherTestSuite/testAnotherFailure()",
+                  "result": "Failed",
+                  "duration": "0.003s",
+                  "durationInSeconds": 0.003,
+                  "children": [
+                    {
+                      "name": "AnotherTests.swift:42: XCTAssertEqual failed: (\"1\") is not equal to (\"2\")",
+                      "nodeType": "Failure Message"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
