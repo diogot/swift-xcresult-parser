@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  test:
+    name: Test Release
+    runs-on: macos-26
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Swift version
+        run: swift --version
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build release
+        run: swift build -c release
+
+  create-release:
+    name: Create GitHub Release
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << 'EOF'
+          ## Installation
+
+          ### Swift Package Manager
+
+          Add to your `Package.swift`:
+
+          ```swift
+          dependencies: [
+              .package(url: "https://github.com/${{ github.repository }}.git", from: "${{ steps.get_version.outputs.VERSION }}")
+          ]
+          ```
+
+          Then add `XCResultParser` to your target dependencies:
+
+          ```swift
+          .target(name: "YourTarget", dependencies: ["XCResultParser"])
+          ```
+
+          ## Features
+
+          - 📦 Parse Xcode `.xcresult` bundles
+          - ⚠️ Extract build warnings, errors, and analyzer warnings
+          - 🧪 Extract test failures with source locations
+          - 🔄 Type-safe Swift models with resilient decoding
+          - ⚡ Async/await support with Swift concurrency
+          - 🛡️ Zero external dependencies
+
+          ## Requirements
+
+          - Swift 6.2+
+          - macOS 15+
+          - Xcode 16+
+
+          ## Usage
+
+          ```swift
+          import XCResultParser
+
+          let parser = XCResultParser(path: "path/to/test.xcresult")
+          let result = try await parser.parse()
+
+          // Access build issues
+          for issue in result.buildResults?.allIssues ?? [] {
+              print("\(issue.severity): \(issue.message)")
+          }
+
+          // Access test failures
+          for failure in result.testResults?.failures ?? [] {
+              print("FAIL: \(failure.testClass).\(failure.testName)")
+          }
+          ```
+
+          For more information, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
