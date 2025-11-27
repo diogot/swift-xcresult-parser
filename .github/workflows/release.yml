@@ -98,4 +98,5 @@ jobs:
       - name: Create Release
         uses: diogot/gh-actions-workflows/actions/create-release@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           body-file: release_notes.md
