@@ -9,14 +9,14 @@
       "issueType": "Error",
       "message": "Cannot find 'undefinedVariable' in scope",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#25",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#StartingLineNumber=24&StartingColumnNumber=0",
       "className": "BrokenFile"
     },
     {
       "issueType": "Error",
       "message": "Type 'String' has no member 'nonExistent'",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#30"
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/BrokenFile.swift#StartingLineNumber=29&StartingColumnNumber=0"
     }
   ],
   "startTime": 1763935325.829,
@@ -27,7 +27,7 @@
       "issueType": "Warning",
       "message": "Initialization of variable was never used",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/Other.swift#10"
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/Other.swift#StartingLineNumber=9&StartingColumnNumber=0"
     }
   ]
 }

@@ -3,30 +3,48 @@ import Testing
 
 @Suite("SourceLocation Tests")
 struct SourceLocationTests {
-    @Test("Parse source URL with line number")
-    func parseSourceURLWithLine() {
-        let url = "file:///Users/dev/SampleProject/Sources/ContentView.swift#15"
+    @Test("Parse source URL with xcresulttool format")
+    func parseSourceURLWithXcresulttoolFormat() {
+        // Real format from xcresulttool - line numbers are 0-based
+        let url = "file:///Users/dev/SampleProject/Sources/ContentView.swift#EndingColumnNumber=30&EndingLineNumber=14&StartingColumnNumber=30&StartingLineNumber=14&Timestamp=786206164.289793"
         let location = SourceLocation.fromSourceURL(url)
 
         #expect(location != nil)
         #expect(location?.file == "/Users/dev/SampleProject/Sources/ContentView.swift")
-        #expect(location?.line == 15)
-        #expect(location?.column == nil)
+        #expect(location?.line == 15) // 0-based 14 becomes 1-based 15
+        #expect(location?.column == 31) // 0-based 30 becomes 1-based 31
     }
 
-    @Test("Parse source URL without line number defaults to 1")
-    func parseSourceURLWithoutLine() {
+    @Test("Parse source URL without fragment returns nil")
+    func parseSourceURLWithoutFragment() {
         let url = "file:///Users/dev/SampleProject/Sources/ContentView.swift"
         let location = SourceLocation.fromSourceURL(url)
 
+        #expect(location == nil)
+    }
+
+    @Test("Parse source URL with minimal fragment")
+    func parseSourceURLWithMinimalFragment() {
+        let url = "file:///Users/dev/SampleProject/Sources/ContentView.swift#StartingLineNumber=9"
+        let location = SourceLocation.fromSourceURL(url)
+
         #expect(location != nil)
         #expect(location?.file == "/Users/dev/SampleProject/Sources/ContentView.swift")
-        #expect(location?.line == 1)
+        #expect(location?.line == 10) // 0-based 9 becomes 1-based 10
+        #expect(location?.column == nil)
     }
 
     @Test("Parse invalid URL returns nil")
     func parseInvalidURL() {
         let location = SourceLocation.fromSourceURL("not-a-file-url")
+        #expect(location == nil)
+    }
+
+    @Test("Parse source URL with invalid fragment returns nil")
+    func parseSourceURLWithInvalidFragment() {
+        let url = "file:///Users/dev/SampleProject/Sources/ContentView.swift#InvalidFragment"
+        let location = SourceLocation.fromSourceURL(url)
+
         #expect(location == nil)
     }
 

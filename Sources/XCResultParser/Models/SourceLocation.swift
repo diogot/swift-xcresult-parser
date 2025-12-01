@@ -32,19 +32,53 @@ public struct SourceLocation: Sendable, Equatable {
     }
 
     /// Parse sourceURL from build issues
-    /// Format: `file:///absolute/path/to/File.swift#LineNumber`
+    /// Format: `file:///path/File.swift#EndingColumnNumber=X&EndingLineNumber=X&StartingColumnNumber=X&StartingLineNumber=X&Timestamp=X`
+    /// Note: Line numbers in xcresulttool are 0-based, so we add 1 for 1-based output
     public static func fromSourceURL(_ urlString: String) -> SourceLocation? {
         guard urlString.hasPrefix("file://") else { return nil }
 
         let withoutScheme = String(urlString.dropFirst(7))
         let parts = withoutScheme.split(separator: "#", maxSplits: 1)
         let absolutePath = String(parts[0])
-        let line = parts.count > 1 ? Int(parts[1]) : nil
+
+        var line: Int?
+        var column: Int?
+
+        // Parse query-string fragment if present
+        if parts.count > 1 {
+            let fragment = String(parts[1])
+            let params = fragment.split(separator: "&")
+
+            for param in params {
+                let keyValue = param.split(separator: "=", maxSplits: 1)
+                guard keyValue.count == 2 else { continue }
+
+                let key = String(keyValue[0])
+                let value = String(keyValue[1])
+
+                switch key {
+                case "StartingLineNumber":
+                    // xcresulttool uses 0-based line numbers, convert to 1-based
+                    if let num = Int(value) {
+                        line = num + 1
+                    }
+                case "StartingColumnNumber":
+                    // xcresulttool uses 0-based column numbers, convert to 1-based
+                    if let num = Int(value) {
+                        column = num + 1
+                    }
+                default:
+                    break
+                }
+            }
+        }
+
+        guard let line else { return nil }
 
         return SourceLocation(
             file: absolutePath,
-            line: line ?? 1,
-            column: nil
+            line: line,
+            column: column
         )
     }
 

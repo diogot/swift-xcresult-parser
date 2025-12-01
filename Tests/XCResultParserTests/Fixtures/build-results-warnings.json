@@ -6,7 +6,7 @@
       "issueType": "Analyzer Warning",
       "message": "Potential memory leak",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/Memory.swift#42",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/Memory.swift#StartingLineNumber=41&StartingColumnNumber=0",
       "className": "Memory"
     }
   ],
@@ -21,14 +21,14 @@
       "issueType": "Warning",
       "message": "Variable 'unused' was never used",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/ContentView.swift#15",
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/ContentView.swift#StartingLineNumber=14&StartingColumnNumber=0",
       "className": "ContentView"
     },
     {
       "issueType": "Warning",
       "message": "Deprecated API usage",
       "targetName": "SampleProject",
-      "sourceURL": "file:///Users/dev/SampleProject/Sources/LegacyCode.swift#100"
+      "sourceURL": "file:///Users/dev/SampleProject/Sources/LegacyCode.swift#StartingLineNumber=99&StartingColumnNumber=0"
     }
   ]
 }
