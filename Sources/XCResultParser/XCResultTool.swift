@@ -25,15 +25,25 @@ actor XCResultTool {
             throw XCResultParserError.xcresulttoolNotFound
         }
 
-        process.waitUntilExit()
+        // Read output BEFORE waiting to avoid pipe buffer deadlock
+        // (if output exceeds ~64KB, the process blocks waiting to write)
+        let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
+        let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
+
+        // Use non-blocking continuation instead of waitUntilExit() to avoid
+        // exhausting Swift's cooperative thread pool when processing multiple bundles
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            process.terminationHandler = { _ in
+                continuation.resume()
+            }
+        }
 
         if process.terminationStatus != 0 {
-            let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
             let errorMessage = String(data: errorData, encoding: .utf8) ?? "Unknown error"
             throw XCResultParserError.xcresulttoolFailed(errorMessage.trimmingCharacters(in: .whitespacesAndNewlines))
         }
 
-        return stdout.fileHandleForReading.readDataToEndOfFile()
+        return outputData
     }
 
     /// Get build results from the xcresult bundle
