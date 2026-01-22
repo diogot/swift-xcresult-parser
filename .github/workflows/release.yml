@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Test Release
@@ -12,6 +16,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.swift') }}
+          restore-keys: |
+            spm-${{ runner.os }}-
 
       - name: Check Swift version
         run: swift --version
@@ -31,15 +45,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get version from tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Generate release notes
-        id: release_notes
         run: |
-          cat > release_notes.md << 'EOF'
+          # Get previous tag for changelog
+          PREV_TAG=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | sed -n '2p')
+
+          # Generate changelog
+          echo "## What's Changed" > release_notes.md
+          echo "" >> release_notes.md
+          if [ -z "$PREV_TAG" ]; then
+            git log --pretty=format:"- %s" HEAD >> release_notes.md
+          else
+            git log --pretty=format:"- %s" ${PREV_TAG}..HEAD >> release_notes.md
+          fi
+          echo "" >> release_notes.md
+          echo "" >> release_notes.md
+
+          # Append static content
+          cat >> release_notes.md << 'EOF'
           ## Installation
 
           ### Swift Package Manager
@@ -58,39 +88,11 @@ jobs:
           .target(name: "YourTarget", dependencies: ["XCResultParser"])
           ```
 
-          ## Features
-
-          - 📦 Parse Xcode `.xcresult` bundles
-          - ⚠️ Extract build warnings, errors, and analyzer warnings
-          - 🧪 Extract test failures with source locations
-          - 🔄 Type-safe Swift models with resilient decoding
-          - ⚡ Async/await support with Swift concurrency
-          - 🛡️ Zero external dependencies
-
           ## Requirements
 
           - Swift 6.2+
           - macOS 15+
           - Xcode 16+
-
-          ## Usage
-
-          ```swift
-          import XCResultParser
-
-          let parser = XCResultParser(path: "path/to/test.xcresult")
-          let result = try await parser.parse()
-
-          // Access build issues
-          for issue in result.buildResults?.allIssues ?? [] {
-              print("\(issue.severity): \(issue.message)")
-          }
-
-          // Access test failures
-          for failure in result.testResults?.failures ?? [] {
-              print("FAIL: \(failure.testClass).\(failure.testName)")
-          }
-          ```
 
           For more information, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
           EOF
