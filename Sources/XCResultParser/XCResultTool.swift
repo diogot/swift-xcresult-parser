@@ -10,14 +10,25 @@ actor XCResultTool {
 
     /// Execute xcresulttool and return the JSON data
     private func execute(arguments: [String]) async throws -> Data {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
-        process.arguments = ["xcresulttool"] + arguments + ["--path", path, "--compact"]
+        let fileManager = FileManager.default
+        let tempDir = fileManager.temporaryDirectory
+        let uuid = UUID().uuidString
+        let stdoutFile = tempDir.appendingPathComponent("xcresulttool-\(uuid).stdout")
+        let stderrFile = tempDir.appendingPathComponent("xcresulttool-\(uuid).stderr")
 
-        let stdout = Pipe()
-        let stderr = Pipe()
-        process.standardOutput = stdout
-        process.standardError = stderr
+        defer {
+            try? fileManager.removeItem(at: stdoutFile)
+            try? fileManager.removeItem(at: stderrFile)
+        }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/sh")
+        process.arguments = [
+            "-c",
+            "xcrun \"$@\" > \"\(stdoutFile.path)\" 2> \"\(stderrFile.path)\"",
+            "--",
+            "xcresulttool"
+        ] + arguments + ["--path", path, "--compact"]
 
         do {
             try process.run()
@@ -25,20 +36,17 @@ actor XCResultTool {
             throw XCResultParserError.xcresulttoolNotFound
         }
 
-        // Read output BEFORE waiting to avoid pipe buffer deadlock
-        // (if output exceeds ~64KB, the process blocks waiting to write)
-        let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
-        let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
 
-        // Use non-blocking continuation instead of waitUntilExit() to avoid
-        // exhausting Swift's cooperative thread pool when processing multiple bundles
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            process.terminationHandler = { _ in
-                continuation.resume()
-            }
+        let outputData: Data
+        do {
+            outputData = try Data(contentsOf: stdoutFile)
+        } catch {
+            throw XCResultParserError.xcresulttoolFailed("Failed to read stdout: \(error.localizedDescription)")
         }
 
         if process.terminationStatus != 0 {
+            let errorData = (try? Data(contentsOf: stderrFile)) ?? Data()
             let errorMessage = String(data: errorData, encoding: .utf8) ?? "Unknown error"
             throw XCResultParserError.xcresulttoolFailed(errorMessage.trimmingCharacters(in: .whitespacesAndNewlines))
         }

@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCResultParser
 
-@Suite("Integration Tests")
+@Suite("Integration Tests", .serialized)
 struct IntegrationTests {
     /// Get path to xcresult fixture bundle
     private func fixtureBundle(_ name: String) -> String {

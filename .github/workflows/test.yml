@@ -32,8 +32,12 @@ jobs:
       - name: Check Swift version
         run: swift --version
 
+      - name: Check xcresulttool availability
+        run: xcrun xcresulttool version
+
       - name: Build
         run: swift build
 
       - name: Run Tests
+        timeout-minutes: 5
         run: swift test
