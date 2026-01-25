@@ -30,13 +30,12 @@ actor XCResultTool {
         let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
         let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
 
-        // Use non-blocking continuation instead of waitUntilExit() to avoid
-        // exhausting Swift's cooperative thread pool when processing multiple bundles
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            process.terminationHandler = { _ in
-                continuation.resume()
-            }
-        }
+        // Wait for process termination on a detached task to avoid:
+        // 1. Blocking the cooperative thread pool (waitUntilExit blocks)
+        // 2. Race condition with terminationHandler (process may have exited before handler was registered)
+        await Task.detached {
+            process.waitUntilExit()
+        }.value
 
         if process.terminationStatus != 0 {
             let errorMessage = String(data: errorData, encoding: .utf8) ?? "Unknown error"
