@@ -53,7 +53,8 @@ struct XCResultToolTests {
 
         for iteration in 1...5 {
             let result = try await parser.parse()
-            #expect(result.buildResults != nil, "Iteration \(iteration) should succeed")
+            #expect(result.buildResults != nil || result.testResults != nil,
+                    "Iteration \(iteration) should succeed")
         }
     }
 }

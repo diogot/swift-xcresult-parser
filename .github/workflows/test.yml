@@ -21,6 +21,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.swift') }}
+          restore-keys: |
+            spm-${{ runner.os }}-
+
       - name: Check Swift version
         run: swift --version
 
@@ -32,4 +40,4 @@ jobs:
 
       - name: Run Tests
         timeout-minutes: 5
-        run: swift test --verbose
+        run: swift test
